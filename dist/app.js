@@ -11,20 +11,20 @@ const getPrice_1 = require("./controllers/getPrice");
 const effectivePrice_1 = require("./controllers/effectivePrice");
 const checkPair_1 = require("./middlewares/checkPair");
 const app = (0, express_1.default)();
-const ws = new ws_1.default('wss://api-pub.bitfinex.com/ws/2');
+const ws = new ws_1.default("wss://api-pub.bitfinex.com/ws/2");
 const pairs = {
-    ETHUSD: 'ETHUSD',
-    BTCUSD: 'BTCUSD',
+    ETHUSD: "ETHUSD",
+    BTCUSD: "BTCUSD",
 };
 const msg1 = JSON.stringify({
-    event: 'subscribe',
-    channel: 'book',
-    symbol: 'tBTCUSD',
+    event: "subscribe",
+    channel: "book",
+    symbol: "tBTCUSD",
 });
 const msg2 = JSON.stringify({
-    event: 'subscribe',
-    channel: 'book',
-    symbol: 'tETHUSD',
+    event: "subscribe",
+    channel: "book",
+    symbol: "tETHUSD",
 });
 exports.book = {
     BTCUSD: {
@@ -46,7 +46,7 @@ ws.onmessage = (msg) => {
     const data = JSON.parse(msg.data);
     // console.log(data);
     if (data.event) {
-        if (data.event === 'subscribed') {
+        if (data.event === "subscribed") {
             chanId[data.pair] = data.chanId;
         }
         //guardar el chanId, si data.pair === 'ETHUSD', chanIdETH = data.pair y lo mismo con BTC
@@ -63,8 +63,8 @@ ws.onmessage = (msg) => {
     else {
         //this is an update
         // console.log(`actualizacion de ${pair}`, orders);
-        const orderType = orders[2] > 0 ? 'bids' : 'asks';
-        if (orders === 'hb')
+        const orderType = orders[2] > 0 ? "bids" : "asks";
+        if (orders === "hb")
             return;
         const foundIdx = (0, findIndex_1.default)(orders, pair, orderType, exports.book);
         if (foundIdx > -1) {
@@ -90,15 +90,16 @@ ws.onmessage = (msg) => {
         return;
     }
 };
-exports.default = app;
-app.get('/', (_req, res) => {
-    res.send('Hello!');
+app.get("/", (_req, res) => {
+    res.send("Hello!");
 });
 app.use(checkPair_1.checkPair);
-app.get('/price', getPrice_1.getPrice);
-app.get('/calcprice', effectivePrice_1.effectivePrice);
-app.get('/book', (_req, res) => {
-    return res.send(exports.book);
+app.get("/price", getPrice_1.getPrice);
+app.get("/calcprice", effectivePrice_1.effectivePrice);
+app.get("/book", (req, res) => {
+    const { pair } = req.query;
+    return res.send(exports.book[pair]);
 });
-app.listen(3000, () => console.log('holis el server ya ta andando'));
+app.listen(3000, () => console.log("holis el server ya ta andando"));
+exports.default = app;
 //# sourceMappingURL=app.js.map

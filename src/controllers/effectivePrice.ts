@@ -1,19 +1,13 @@
 /* eslint-disable prefer-const */
-import { book } from '../app';
-import { RequestHandler } from 'express';
-import { BookInterface } from '../types/sockets';
+import { book } from "../app";
+import { RequestHandler } from "express";
+import { BookInterface } from "../types/sockets";
 
 export const effectivePrice: RequestHandler = async (req, res) => {
   // check ETHUSD o BTCUSD
   let { pair, operation, amount, priceLimit } = req.query;
   pair = pair.toString().toUpperCase();
-  const result = getEffectivePrice(
-    book,
-    pair,
-    operation as string,
-    +amount,
-    +priceLimit
-  );
+  const result = getEffectivePrice(book, pair, operation as string, +amount, +priceLimit);
   if (!result.success) {
     return res.send(result.message).status(404);
   }
@@ -25,26 +19,27 @@ const getEffectivePrice = (
   pair: string,
   operation: string,
   amount: number,
-  priceLimit
+  priceLimit: number
 ) => {
   let acum = 0;
   let price = 0;
   let bought = 0;
-  const type = operation.toString() === 'buy' ? 'asks' : 'bids';
+  const type = operation.toString() === "buy" ? "asks" : "bids";
+
   if (!book[pair][type].length) {
     return {
       success: false,
-      message: 'Book is not loaded yet, please try again later',
+      message: "Book is not loaded yet, please try again later",
     };
   }
 
   for (let i = 0; i < book[pair][type].length; i++) {
     if (priceLimit) {
-      if (type === 'asks') {
-        if (priceLimit < book[pair][type][0][0]) {
+      if (type === "asks") {
+        if (priceLimit <= book[pair][type][0][0]) {
           return {
             success: false,
-            message: 'No order can be completed at that price limit',
+            message: "No order can be completed at that price limit",
           };
         }
         //agregar verificacion si es compra price > priceLimit y si es venta price < priceLimit
@@ -55,27 +50,25 @@ const getEffectivePrice = (
           // console.log('ACUM', acum);
           // console.log('ACTUAL', book[pair][type][i][0]);
 
-          const max =
-            (price - priceLimit * acum) / (priceLimit - book[pair][type][i][0]);
+          const max = (price - priceLimit * acum) / Math.abs(priceLimit - book[pair][type][i][0]);
 
-          console.log('cantidad que podes comprar', max);
+          console.log("cantidad que podes comprar", max);
           return {
-            message: `You can ${operation} ${max} ${pair.slice(
-              0,
-              3
-            )} at $${priceLimit}`,
+            message: `You can ${operation} ${max} ${pair.slice(0, 3)} at $${priceLimit}`,
             success: true,
           };
 
           //calcular cuanto puedo comprar antes de pasarse
         }
         //! NOT SURE IF CORRECT
-      } else {
+      } else if (type === "bids") {
         //verificar para cuando el usuario quiere vender
-        if (priceLimit > book[pair][type][0][0]) {
+        console.log(book[pair][type][0][0]);
+
+        if (priceLimit >= book[pair][type][0][0]) {
           return {
             success: false,
-            message: 'No order can be completed at that price limit',
+            message: "No order can be completed at that price limit",
           };
         }
 
@@ -85,16 +78,13 @@ const getEffectivePrice = (
           // console.log('PRICE', price / acum);
           // console.log('ACUM', acum);
           // console.log('ACTUAL', book[pair][type][i][0]);
+          console.log("xd", book[pair][type][i][0]);
 
-          const max =
-            (price - priceLimit * acum) / (priceLimit - book[pair][type][i][0]);
+          const max = (price - priceLimit * acum) / (priceLimit - book[pair][type][i][0]);
 
-          console.log('cantidad que podes comprar', max);
+          console.log("cantidad que podes comprar", max);
           return {
-            message: `You can ${operation} ${max} ${pair.slice(
-              0,
-              3
-            )} at $${priceLimit}`,
+            message: `You can ${operation} ${max} ${pair.slice(0, 3)} at $${priceLimit}`,
             success: true,
           };
 
@@ -120,15 +110,12 @@ const getEffectivePrice = (
 
       return {
         success: true,
-        message: `The effective price to ${operation} ${amount} of ${pair.slice(
-          0,
-          3
-        )} is $${price}`,
+        message: `The effective price to ${operation} ${amount} of ${pair.slice(0, 3)} is $${price}`,
       };
     }
   }
   return {
     success: false,
-    message: 'This operation is too big to be completed!',
+    message: "This operation is too big to be completed!",
   };
 };
