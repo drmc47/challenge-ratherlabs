@@ -8,9 +8,9 @@ export const effectivePrice: RequestHandler = async (req, res) => {
   let { pair, operation, amount, priceLimit } = req.query;
   pair = pair.toString().toUpperCase();
   // ? Could be a middleware
-  if (pair !== 'ETHUSD' && pair !== 'BTCUSD') {
-    return res.sendStatus(412);
-  }
+  //   if (pair !== 'ETHUSD' && pair !== 'BTCUSD') {
+  //     return res.sendStatus(412);
+  //   }
   const result = getEffectivePrice(
     book,
     pair,

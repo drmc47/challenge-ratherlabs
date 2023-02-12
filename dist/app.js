@@ -9,6 +9,7 @@ const ws_1 = __importDefault(require("ws"));
 const findIndex_1 = __importDefault(require("./utils/findIndex"));
 const getPrice_1 = require("./controllers/getPrice");
 const effectivePrice_1 = require("./controllers/effectivePrice");
+const checkPair_1 = require("./middlewares/checkPair");
 const app = (0, express_1.default)();
 const ws = new ws_1.default('wss://api-pub.bitfinex.com/ws/2');
 const pairs = {
@@ -93,6 +94,7 @@ exports.default = app;
 app.get('/', (_req, res) => {
     res.send('Hello!');
 });
+app.use(checkPair_1.checkPair);
 app.get('/price', getPrice_1.getPrice);
 app.get('/calcprice', effectivePrice_1.effectivePrice);
 app.get('/book', (_req, res) => {

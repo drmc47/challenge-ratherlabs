@@ -16,9 +16,9 @@ const getPrice = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let { pair } = req.query;
     pair = pair.toString().toUpperCase();
     // ? Could be a middleware
-    if (pair !== 'ETHUSD' && pair !== 'BTCUSD') {
-        return res.sendStatus(405);
-    }
+    // if (pair !== 'ETHUSD' && pair !== 'BTCUSD') {
+    //   return res.sendStatus(405);
+    // }
     const betterBid = app_1.book[pair].bids[0];
     const betterAsk = app_1.book[pair].asks[0];
     res.send({ bestBid: betterBid, bestAsk: betterAsk });

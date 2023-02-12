@@ -17,9 +17,9 @@ const effectivePrice = (req, res) => __awaiter(void 0, void 0, void 0, function*
     let { pair, operation, amount, priceLimit } = req.query;
     pair = pair.toString().toUpperCase();
     // ? Could be a middleware
-    if (pair !== 'ETHUSD' && pair !== 'BTCUSD') {
-        return res.sendStatus(412);
-    }
+    //   if (pair !== 'ETHUSD' && pair !== 'BTCUSD') {
+    //     return res.sendStatus(412);
+    //   }
     const result = getEffectivePrice(app_1.book, pair, operation, +amount, +priceLimit);
     if (!result.success) {
         return res.send(result.message).status(404);

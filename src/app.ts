@@ -4,6 +4,7 @@ import { BookInterface, Order } from './types/sockets';
 import findIndexByProperty from './utils/findIndex';
 import { getPrice } from './controllers/getPrice';
 import { effectivePrice } from './controllers/effectivePrice';
+import { checkPair } from './middlewares/checkPair';
 const app = express();
 const ws = new Websocket('wss://api-pub.bitfinex.com/ws/2');
 const pairs = {
@@ -94,6 +95,8 @@ export default app;
 app.get('/', (_req, res) => {
   res.send('Hello!');
 });
+
+app.use(checkPair);
 
 app.get('/price', getPrice);
 app.get('/calcprice', effectivePrice);
