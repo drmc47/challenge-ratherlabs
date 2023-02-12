@@ -27,47 +27,60 @@ const getEffectivePrice = (book, pair, operation, amount, priceLimit) => {
     let acum = 0;
     let price = 0;
     let bought = 0;
-    const type = operation.toString() === "buy" ? "asks" : "bids";
+    const type = operation === 'buy' ? 'asks' : 'bids';
+    let priceCond = 0;
     if (!book[pair][type].length) {
         return {
             success: false,
-            message: "Book is not loaded yet, please try again later",
+            message: 'Book is not loaded yet, please try again later',
         };
     }
+    operation === 'buy'
+        ? book[pair][type].sort((a, b) => a[0] - b[0])
+        : book[pair][type].sort((a, b) => b[0] - a[0]);
+    console.log(book[pair][type]);
     for (let i = 0; i < book[pair][type].length; i++) {
         if (priceLimit) {
-            if (type === "asks") {
-                if (priceLimit <= book[pair][type][0][0]) {
+            if (operation === 'buy') {
+                if (book[pair][type][0][0] >= priceLimit) {
                     return {
                         success: false,
-                        message: "No order can be completed at that price limit",
+                        message: 'No order can be completed at that price limit',
                     };
                 }
                 //agregar verificacion si es compra price > priceLimit y si es venta price < priceLimit
-                if (book[pair][type][i][0] > priceLimit) {
+                if (book[pair][type][i][0] >= priceLimit) {
                     if (i === 0)
                         return;
                     // const aver = (priceLimit - price / acum) / book[pair][type][i][0];
-                    // console.log('PRICE', price / acum);
-                    // console.log('ACUM', acum);
-                    // console.log('ACTUAL', book[pair][type][i][0]);
-                    const max = (price - priceLimit * acum) / Math.abs(priceLimit - book[pair][type][i][0]);
-                    console.log("cantidad que podes comprar", max);
-                    return {
-                        message: `You can ${operation} ${max} ${pair.slice(0, 3)} at $${priceLimit}`,
-                        success: true,
-                    };
+                    console.log('PRICE', price / acum);
+                    console.log('ACUM (cantidad comprada)', acum);
+                    console.log('ACTUAL', book[pair][type][i][0]);
+                    priceCond =
+                        (price +
+                            Math.abs(book[pair][type][i][2]) * book[pair][type][i][0]) /
+                            (acum + Math.abs(book[pair][type][i][2]));
+                    console.log('PRICE COND', priceCond);
+                    if (priceCond > priceLimit) {
+                        const max = (price - priceLimit * acum) /
+                            (priceLimit - book[pair][type][i][0]);
+                        console.log('cantidad que podes comprar', max);
+                        return {
+                            message: `You can ${operation} ${max} ${pair.slice(0, 3)} at $${priceLimit}`,
+                            success: true,
+                        };
+                    }
                     //calcular cuanto puedo comprar antes de pasarse
                 }
                 //! NOT SURE IF CORRECT
             }
-            else if (type === "bids") {
+            else if (type === 'bids') {
                 //verificar para cuando el usuario quiere vender
                 console.log(book[pair][type][0][0]);
                 if (priceLimit >= book[pair][type][0][0]) {
                     return {
                         success: false,
-                        message: "No order can be completed at that price limit",
+                        message: 'No order can be completed at that price limit',
                     };
                 }
                 if (book[pair][type][i][0] < priceLimit) {
@@ -77,9 +90,9 @@ const getEffectivePrice = (book, pair, operation, amount, priceLimit) => {
                     // console.log('PRICE', price / acum);
                     // console.log('ACUM', acum);
                     // console.log('ACTUAL', book[pair][type][i][0]);
-                    console.log("xd", book[pair][type][i][0]);
+                    console.log('xd', book[pair][type][i][0]);
                     const max = (price - priceLimit * acum) / (priceLimit - book[pair][type][i][0]);
-                    console.log("cantidad que podes comprar", max);
+                    console.log('cantidad que podes comprar', max);
                     return {
                         message: `You can ${operation} ${max} ${pair.slice(0, 3)} at $${priceLimit}`,
                         success: true,
@@ -108,7 +121,7 @@ const getEffectivePrice = (book, pair, operation, amount, priceLimit) => {
     }
     return {
         success: false,
-        message: "This operation is too big to be completed!",
+        message: 'This operation is too big to be completed!',
     };
 };
 //# sourceMappingURL=effectivePrice.js.map
