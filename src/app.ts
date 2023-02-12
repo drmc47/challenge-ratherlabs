@@ -1,4 +1,4 @@
-import express, { query } from 'express';
+import express from 'express';
 import Websocket from 'ws';
 import { getPrice } from './controllers/getPrice';
 import { effectivePrice } from './controllers/effectivePrice';

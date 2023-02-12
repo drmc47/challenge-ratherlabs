@@ -9,7 +9,6 @@ export const getPrice: RequestHandler = (req, res) => {
   const betterAsk: Order = book[pair].asks[0];
 
   res.send({
-    success: true,
     message: {
       bestBid: {
         price: betterBid[0],
