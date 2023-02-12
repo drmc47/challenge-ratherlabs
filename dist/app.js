@@ -90,18 +90,8 @@ ws.onmessage = (msg) => {
     }
 };
 exports.default = app;
-// The API should expose two endpoints:
-// ○ One that receives a pair name, and retrieves the tips of the
-// orderbook (i.e. the better prices for bid-ask). Response should
-// include both the total amounts and prices.
-// ○ Other endpoint that is called with the pair name, the operation
-// type (buy/sell) and the amount to be traded. Should return the
-// effective price that will result if the order is executed (i.e.
-// evaluate Market Depth).
-// ● API should return market values for the following pairs: BTC-USD and
-// ETH-USD. We expect to handle unexpected pairs
 app.get('/', (_req, res) => {
-    res.send('hola juan calo');
+    res.send('Hello!');
 });
 app.get('/price', getPrice_1.getPrice);
 app.get('/calcprice', effectivePrice_1.effectivePrice);
