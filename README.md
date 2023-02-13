@@ -20,7 +20,6 @@ Clone the repository
 
 The API uses Bitfinex API to get the orderbook, it can handle ETHUSD and BTCUSD pairs. 
 
-## Get list of Things
 
 ### Request
 
