@@ -7,13 +7,8 @@ export const effectivePrice: RequestHandler = (req, res) => {
   // check ETHUSD o BTCUSD
   let { pair, operation, amount, priceLimit } = req.query;
   pair = pair.toString().toUpperCase();
-  const result = getEffectivePrice(
-    book,
-    pair,
-    operation as string,
-    +amount,
-    +priceLimit
-  );
+  operation = operation.toString().toLowerCase();
+  const result = getEffectivePrice(book, pair, operation, +amount, +priceLimit);
   if (!result.success) {
     return res.status(result.code).send({ message: result.message });
   }

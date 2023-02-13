@@ -4,6 +4,7 @@ import { getPrice } from './controllers/getPrice';
 import { effectivePrice } from './controllers/effectivePrice';
 import { checkPair } from './middlewares/checkPair';
 import { handleMessage } from './utils/handleMessage';
+import { checkEffective } from './middlewares/checkEffective';
 
 const app = express();
 const ws = new Websocket('wss://api-pub.bitfinex.com/ws/2');
@@ -33,6 +34,6 @@ app.get('/', (_req, res) => {
   res.sendStatus(200);
 });
 app.get('/api/price', getPrice);
-app.get('/api/calcprice', effectivePrice);
+app.get('/api/calcprice', checkEffective, effectivePrice);
 
 export default app;
