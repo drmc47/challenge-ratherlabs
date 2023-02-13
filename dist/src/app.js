@@ -9,6 +9,7 @@ const getPrice_1 = require("./controllers/getPrice");
 const effectivePrice_1 = require("./controllers/effectivePrice");
 const checkPair_1 = require("./middlewares/checkPair");
 const handleMessage_1 = require("./utils/handleMessage");
+const checkEffective_1 = require("./middlewares/checkEffective");
 const app = (0, express_1.default)();
 const ws = new ws_1.default('wss://api-pub.bitfinex.com/ws/2');
 const msg1 = JSON.stringify({
@@ -31,6 +32,6 @@ app.get('/', (_req, res) => {
     res.sendStatus(200);
 });
 app.get('/api/price', getPrice_1.getPrice);
-app.get('/api/calcprice', effectivePrice_1.effectivePrice);
+app.get('/api/calcprice', checkEffective_1.checkEffective, effectivePrice_1.effectivePrice);
 exports.default = app;
 //# sourceMappingURL=app.js.map
